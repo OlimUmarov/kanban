@@ -1,6 +1,6 @@
 import { ItemType } from "./types";
 
-export const reorder = (list: ItemType<string>[], startIndex: number, endIndex: number): ItemType<string>[] => {
+export const reorder = (list: ItemType[], startIndex: number, endIndex: number): ItemType[] => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -8,8 +8,8 @@ export const reorder = (list: ItemType<string>[], startIndex: number, endIndex: 
 };
 
 export const move = (
-    source: ItemType<string>[],
-    destination: ItemType<string>[],
+    source: ItemType[],
+    destination: ItemType[],
     droppableSource: { index: number; droppableId: string },
     droppableDestination: { index: number; droppableId: string }
 ) => {
