@@ -18,7 +18,9 @@ export const CardItem = ({ item, groupIndex, index, deleteItemFromGroup }: CardI
     const setInputValue = useStore((state) => state.setInputValue);
 
     const onEditClick = () => setInputValue({ id: item.id, content: item.content });
-    const onDeleteClick = () => deleteItemFromGroup(groupIndex, index);
+    const onDeleteClick = () => {
+        deleteItemFromGroup(groupIndex, index);
+    }
 
     return (
         <Draggable draggableId={item.id} index={index}>

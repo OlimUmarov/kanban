@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import {TextArea } from '.';
+import { useRef, useEffect } from 'react';
+import { TextArea } from '.';
 import { ItemType } from '../../features/types';
 import { useAutosizeTextArea, useClickOutside } from '../../features/hooks';
 import { ActionButtons } from '../Buttons';
@@ -29,6 +29,11 @@ export const Input = ({ groupIndex, inputValue, title, addNewItemToGroup, setInp
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue({ ...inputValue, content: e.target.value });
     };
+
+
+    useEffect(() => {
+        textAreaRef.current && textAreaRef.current.select();
+    }, [title])
 
     return (
         <div ref={formRef} className="max-w-card flex flex-col gap-3 bg-main-gray p-2 rounded-xl">

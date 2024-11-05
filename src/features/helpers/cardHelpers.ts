@@ -56,8 +56,11 @@ export const deleteItemFromGroup = (
     cards: ItemGroups,
     setCards: SetCardsFn
 ) => {
-    const updatedCards = [...cards];
-    updatedCards[groupIndex].splice(itemIndex, 1);
+    const updatedCards = cards.map((group, index) =>
+        index === groupIndex
+            ? group.filter((_, idx) => idx !== itemIndex)
+            : group
+    );
 
     setCards(updatedCards);
 };

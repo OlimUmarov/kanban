@@ -63,7 +63,7 @@ export const Card = ({ groupIndex, group }: CardPropsType) => {
                   item={item}
                   index={index}
                   groupIndex={groupIndex}
-                  deleteItemFromGroup={(itemIndex) =>
+                  deleteItemFromGroup={(_, itemIndex) =>
                     deleteItemFromGroup(groupIndex, itemIndex, cards, setCards)
                   }
                 />

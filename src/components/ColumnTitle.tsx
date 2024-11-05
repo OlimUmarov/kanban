@@ -21,10 +21,21 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
     useClickOutside(formRef, () => editTitle());
 
     const editTitle = () => {
-        const text = inputValue && inputValue?.trim() !== '' ? inputValue : `New Column ${index + 1}`;
+        const text = inputValue?.trim() || `New Column ${index + 1}`;
+        updateTitle(text);
+    };
+
+    const onCancelEdit = () => {
+        if (!inputValue) {
+            updateTitle(`New Column ${index + 1}`);
+        }
+        setActiveTitleIndex(null);
+        setInputValue(title);
+    };
+
+    const updateTitle = (text: string) => {
         const updatedTitles = [...titles];
         updatedTitles[index] = text;
-
         setTitles(updatedTitles);
         setActiveTitleIndex(null);
         localStorage.setItem('titles', JSON.stringify(updatedTitles));
@@ -32,7 +43,8 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
 
     useEffect(() => {
         title && setInputValue(title);
-    }, [title])
+        textAreaRef.current && textAreaRef.current.select();
+    }, [title,activeTitleIndex])
 
     return (
         <div className='max-w-card w-full px-2 py-2 my-2'>
@@ -46,19 +58,20 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
                         autoFocus
                         maxLength={200}
                         onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && editTitle()}
                     />
                     <div className="flex gap-2">
                         <button
                             type="button"
                             className="bg-main-blue w-fit hover:bg-main-blue-hover text-white py-1.5 px-4 rounded transition-colors"
-                            onClick={editTitle} // Save when clicked
+                            onClick={editTitle}
                         >
                             Save
                         </button>
                         <button
                             type="button"
                             className="hover:bg-gray-300 text-white py-1 px-3 rounded"
-                            onClick={() => setActiveTitleIndex(null)} // Hide input when clicking "Close"
+                            onClick={onCancelEdit}
                         >
                             <CloseIcon className="h-3.5 w-3.5 stroke-black" />
                         </button>
