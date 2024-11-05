@@ -26,7 +26,7 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
         updatedTitles[index] = text;
 
         setTitles(updatedTitles);
-        setInputValue(null);
+        // setInputValue(null);
         setActiveTitleIndex(null);
         localStorage.setItem('titles', JSON.stringify(updatedTitles));
     };

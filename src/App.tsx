@@ -29,7 +29,6 @@ function App() {
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
-    // Dropped outside the list
     if (!destination) {
       return;
     }
