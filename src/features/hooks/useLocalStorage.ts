@@ -20,6 +20,7 @@ export function useLocalStorage({ cards, titles, setCards, setTitles, }: UseLoca
         localStorage.setItem("itemGroups", JSON.stringify(cards));
         if (titles.length) {
             localStorage.setItem("titles", JSON.stringify(titles));
+            setTitles(titles);
         }
     }, [cards, titles]);
 }
