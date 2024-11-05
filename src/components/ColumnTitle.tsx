@@ -23,12 +23,12 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
         const text = inputValue && inputValue?.trim() !== '' ? inputValue : `New Column ${index + 1}`;
 
         const updatedTitles = [...titles];
-        updatedTitles[index] = text; // Update only the title for the current index
+        updatedTitles[index] = text;
 
         setTitles(updatedTitles);
-        setInputValue(null); // Reset the input value
-        setActiveTitleIndex(null); // Hide the textarea
-        localStorage.setItem('titles', JSON.stringify(updatedTitles)); // Save updated titles to local storage
+        setInputValue(null);
+        setActiveTitleIndex(null);
+        localStorage.setItem('titles', JSON.stringify(updatedTitles));
     };
 
     useEffect(() => {

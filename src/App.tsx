@@ -7,17 +7,25 @@ import { PlusIcon } from "./icons/icon";
 
 function App() {
   const cards = useStore((state) => state.cards);
+  const titles = useStore((state) => state.titles);
   const setCards = useStore((state) => state.setCards);
+  const setTitles = useStore((state) => state.setTitles);
   const setActiveTitleIndex = useStore((state) => state.setActiveTitleIndex);
 
   useEffect(() => {
     const savedState = localStorage.getItem('itemGroups');
+    const savedTitles = localStorage.getItem('titles');
     setCards(savedState ? JSON.parse(savedState) : Array.from({ length: 3 }, () => []));
-  }, [setCards]);
+    setTitles(savedTitles ? JSON.parse(savedTitles) : ["ToDo", "Progress", "Done"]);
+  }, [setCards, setTitles]);
 
   useEffect(() => {
     localStorage.setItem('itemGroups', JSON.stringify(cards));
-  }, [cards]);
+    if (titles.length) {
+      localStorage.setItem('titles', JSON.stringify(titles));
+      setTitles(titles);
+    }
+  }, [cards, titles]);
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
