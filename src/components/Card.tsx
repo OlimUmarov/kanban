@@ -1,10 +1,18 @@
-import { useEffect } from 'react';
-import { Droppable } from "react-beautiful-dnd";
-import { CardItem, ColumnTitle, Input, InputForm } from "./index";
+// components/Card.tsx
+import { Droppable } from 'react-beautiful-dnd';
+import { CardItem, ColumnTitle } from './index';
 import { useStore } from '../features/store';
 import { ItemType } from '../features/types';
 import classNames from 'classnames';
 import { CloseIcon } from '../icons/icon';
+import { useTitlesStorage } from '../features/hooks';
+import {
+  deleteGroupById,
+  addNewItemToGroup,
+  editItemInGroup,
+  deleteItemFromGroup,
+} from '../features/helpers/cardHelpers';
+import { Input, InputForm } from './Inputs';
 
 type CardPropsType = {
   groupIndex: number;
@@ -12,49 +20,15 @@ type CardPropsType = {
 };
 
 export const Card = ({ groupIndex, group }: CardPropsType) => {
-  const cards = useStore((state) => state.cards);
+  const cards = useStore((state) => state.cards)
   const inputValue = useStore((state) => state.inputValue);
-  const titles = useStore((state) => state.titles);
+  const titles = useStore((state) => state.titles)
   const activeTitleIndex = useStore((state) => state.activeTitleIndex);
-  const setCards = useStore((state) => state.setCards);
-  const setInputValue = useStore((state) => state.setInputValue);
-  const setTitles = useStore((state) => state.setTitles);
+  const setCards = useStore((state) => state.setCards)
+  const setInputValue = useStore((state) => state.setInputValue)
+  const setTitles = useStore((state) => state.setTitles)
 
-  useEffect(() => {
-    const savedTitles = localStorage.getItem('titles');
-    setTitles(savedTitles ? JSON.parse(savedTitles) : []);
-  }, [setTitles]);
-
-  const deleteGroupById = (groupIndex: number) => {
-    const newState = [...cards];
-    const removeTitle = titles.filter((_, index) => index !== groupIndex)
-    newState.splice(groupIndex, 1);
-    setCards(newState);
-    setTitles(removeTitle);
-    localStorage.setItem('titles', JSON.stringify(removeTitle));
-  };
-
-  const addNewItemToGroup = (groupIndex: number, item: ItemType) => {
-    const newState = [...cards];
-    newState[groupIndex].push(item);
-    setCards(newState);
-    setInputValue(null);
-  };
-
-  const editItemInGroup = (groupIndex: number, item: ItemType) => {
-    const newState = [...cards];
-    newState[groupIndex] = newState[groupIndex].map((i) =>
-      i.id === item.id ? item : i
-    );
-    setCards(newState);
-    setInputValue(null);
-  };
-
-  const deleteItemFromGroup = (groupIndex: number, itemIndex: number) => {
-    const newState = [...cards];
-    newState[groupIndex].splice(itemIndex, 1);
-    setCards(newState);
-  };
+  useTitlesStorage(setTitles);
 
   return (
     <Droppable droppableId={`${groupIndex}`}>
@@ -63,8 +37,8 @@ export const Card = ({ groupIndex, group }: CardPropsType) => {
           ref={provided.innerRef}
           {...provided.droppableProps}
           className={classNames(
-            "relative mx-2 px-2 rounded-xl min-w-[300px] w-[300px] z-10 h-fit bg-opacity-20 transition-opacity",
-            snapshot.isDraggingOver ? "bg-blue-300" : "bg-main-gray"
+            'relative mx-2 px-2 rounded-xl min-w-[300px] w-[300px] z-10 h-fit bg-opacity-20 transition-opacity',
+            snapshot.isDraggingOver ? 'bg-blue-300' : 'bg-main-gray'
           )}
         >
           <ColumnTitle
@@ -76,7 +50,9 @@ export const Card = ({ groupIndex, group }: CardPropsType) => {
             <div key={item.id}>
               {inputValue?.id === item.id ? (
                 <Input
-                  addNewItemToGroup={editItemInGroup}
+                  addNewItemToGroup={(_, newItem) =>
+                    editItemInGroup(groupIndex, newItem, cards, setCards, setInputValue)
+                  }
                   groupIndex={groupIndex}
                   inputValue={inputValue}
                   title="Edit card"
@@ -87,20 +63,26 @@ export const Card = ({ groupIndex, group }: CardPropsType) => {
                   item={item}
                   index={index}
                   groupIndex={groupIndex}
-                  deleteItemFromGroup={deleteItemFromGroup}
+                  deleteItemFromGroup={(itemIndex) =>
+                    deleteItemFromGroup(groupIndex, itemIndex, cards, setCards)
+                  }
                 />
               )}
             </div>
           ))}
           <InputForm
-            addNewItemToGroup={addNewItemToGroup}
+            addNewItemToGroup={(groupIndex, item) =>
+              addNewItemToGroup(groupIndex, item, cards, setCards, setInputValue)
+            }
             groupIndex={groupIndex}
             isDraging={snapshot.isDraggingOver}
           />
           <button
             type="button"
             className="rounded-full"
-            onClick={() => deleteGroupById(groupIndex)}
+            onClick={() =>
+              deleteGroupById(groupIndex, cards, titles, setCards, setTitles)
+            }
           >
             <CloseIcon className="absolute top-2 right-2 w-6 h-6 p-1 stroke-white rounded-full hover:bg-gray-500 transition-opacity" />
           </button>

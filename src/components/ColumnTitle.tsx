@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { CloseIcon } from '../icons/icon';
 import { useStore } from '../features/store';
-import useAutosizeTextArea from '../features/hooks/useAutosizeTextArea';
+import { useAutosizeTextArea, useClickOutside } from '../features/hooks';
 
 type ColumnTitlePropsType = {
     title: string;
@@ -18,15 +18,14 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
     const setActiveTitleIndex = useStore((state) => state.setActiveTitleIndex);
 
     useAutosizeTextArea(textAreaRef.current, inputValue || title);
+    useClickOutside(formRef, () => editTitle());
 
     const editTitle = () => {
         const text = inputValue && inputValue?.trim() !== '' ? inputValue : `New Column ${index + 1}`;
-
         const updatedTitles = [...titles];
         updatedTitles[index] = text;
 
         setTitles(updatedTitles);
-        // setInputValue(null);
         setActiveTitleIndex(null);
         localStorage.setItem('titles', JSON.stringify(updatedTitles));
     };
@@ -34,18 +33,6 @@ export const ColumnTitle = ({ title, activeTitleIndex, index }: ColumnTitleProps
     useEffect(() => {
         title && setInputValue(title);
     }, [title])
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (formRef.current && !formRef.current.contains(event.target as Node)) {
-                editTitle();
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [formRef, titles]);
 
     return (
         <div className='max-w-card w-full px-2 py-2 my-2'>
